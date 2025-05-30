@@ -5,7 +5,7 @@ import threading
 from typing import Awaitable, Dict, Iterator, Optional, Tuple, Union
 
 import scrapy
-from playwright.async_api import Error, Page, Request, Response
+from patchright.async_api import Error, Page, Request, Response
 from scrapy.http.headers import Headers
 from scrapy.settings import Settings
 from scrapy.utils.python import to_unicode
@@ -51,9 +51,7 @@ def _is_safe_close_error(error: Error) -> bool:
     )
 
 
-_NAVIGATION_ERROR_MSG = (
-    "Unable to retrieve content because the page is navigating and changing the content."
-)
+_NAVIGATION_ERROR_MSG = "Unable to retrieve content because the page is navigating and changing the content."
 
 
 async def _get_page_content(

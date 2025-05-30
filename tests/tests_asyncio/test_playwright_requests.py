@@ -7,7 +7,7 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from playwright.async_api import (
+from patchright.async_api import (
     Dialog,
     Error as PlaywrightError,
     Page as PlaywrightPage,
@@ -61,9 +61,7 @@ class MixinTestCase:
     async def test_post_request(self):
         async with make_handler({"PLAYWRIGHT_BROWSER_TYPE": self.browser_type}) as handler:
             with MockServer() as server:
-                req = FormRequest(
-                    server.urljoin("/"), meta={"playwright": True}, formdata={"foo": "bar"}
-                )
+                req = FormRequest(server.urljoin("/"), meta={"playwright": True}, formdata={"foo": "bar"})
                 resp = await handler._download_request(req, Spider("foo"))
 
             assert_correct_response(resp, req)
@@ -271,8 +269,7 @@ class MixinTestCase:
         assert (
             "scrapy-playwright",
             logging.WARNING,
-            f"Navigating to {req!r} returned None, the response"
-            " will have empty headers and status 200",
+            f"Navigating to {req!r} returned None, the response" " will have empty headers and status 200",
         ) in self._caplog.record_tuples
         assert not response.headers
         assert response.status == 200
@@ -398,9 +395,7 @@ class MixinTestCase:
                 req = Request(url=server.urljoin("/index.html"), meta={"playwright": True})
                 await handler._download_request(req, Spider("foo"))
 
-        debug_message = (
-            f"[Context=default] Request: <{req.method} {req.url}> (resource type: document)"
-        )
+        debug_message = f"[Context=default] Request: <{req.method} {req.url}> (resource type: document)"
         assert not any(rec.message == debug_message for rec in self._caplog.records)
         make_request_logger.assert_not_called()
 
@@ -412,9 +407,7 @@ class MixinTestCase:
                 req = Request(url=server.urljoin("/index.html"), meta={"playwright": True})
                 await handler._download_request(req, Spider("foo"))
 
-        debug_message = (
-            f"[Context=default] Request: <{req.method} {req.url}> (resource type: document)"
-        )
+        debug_message = f"[Context=default] Request: <{req.method} {req.url}> (resource type: document)"
         assert any(rec.message == debug_message for rec in self._caplog.records)
 
     @allow_windows

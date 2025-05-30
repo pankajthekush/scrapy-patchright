@@ -531,7 +531,7 @@ This key could be used in conjunction with `playwright_include_page` to make a c
 requests using the same page. For instance:
 
 ```python
-from playwright.async_api import Page
+from patchright.async_api import Page
 
 def start_requests(self):
     yield scrapy.Request(
@@ -613,7 +613,7 @@ necessary the spider job could get stuck because of the limit set by the
 `PLAYWRIGHT_MAX_PAGES_PER_CONTEXT` setting.
 
 ```python
-from playwright.async_api import Page
+from patchright.async_api import Page
 import scrapy
 
 class AwesomeSpiderWithPage(scrapy.Spider):
@@ -937,7 +937,7 @@ Values can be either callables or strings (in which case a spider method with th
 Example:
 
 ```python
-from playwright.async_api import Dialog
+from patchright.async_api import Dialog
 
 async def handle_dialog(dialog: Dialog) -> None:
     logging.info(f"Handled dialog with message: {dialog.message}")
@@ -1110,7 +1110,7 @@ translates roughly to:
 
 ```python
 import asyncio
-from playwright.async_api import async_playwright
+from patchright.async_api import async_playwright
 
 async def main():
     async with async_playwright() as pw:

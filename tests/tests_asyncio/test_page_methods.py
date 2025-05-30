@@ -8,7 +8,7 @@ import pytest
 from scrapy import Spider, Request
 from scrapy.http.response.html import HtmlResponse
 
-from playwright.async_api import Page
+from patchright.async_api import Page
 from scrapy_playwright.page import PageMethod
 
 from tests import allow_windows, make_handler, assert_correct_response
@@ -126,13 +126,9 @@ class MixinPageMethodTestCase:
                         "playwright": True,
                         "playwright_page_methods": [
                             PageMethod("wait_for_selector", selector="div.quote"),
-                            PageMethod(
-                                "evaluate", "window.scrollBy(0, document.body.scrollHeight)"
-                            ),
+                            PageMethod("evaluate", "window.scrollBy(0, document.body.scrollHeight)"),
                             PageMethod("wait_for_selector", selector="div.quote:nth-child(11)"),
-                            PageMethod(
-                                "evaluate", "window.scrollBy(0, document.body.scrollHeight)"
-                            ),
+                            PageMethod("evaluate", "window.scrollBy(0, document.body.scrollHeight)"),
                             PageMethod("wait_for_selector", selector="div.quote:nth-child(21)"),
                         ],
                     },

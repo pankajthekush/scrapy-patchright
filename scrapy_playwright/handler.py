@@ -10,8 +10,8 @@ from ipaddress import ip_address
 from time import time
 from typing import Awaitable, Callable, Dict, Optional, Tuple, Type, TypeVar, Union
 
-from playwright._impl._errors import TargetClosedError
-from playwright.async_api import (
+from patchright._impl._errors import TargetClosedError
+from patchright.async_api import (
     BrowserContext,
     BrowserType,
     Download as PlaywrightDownload,
@@ -115,9 +115,7 @@ class Config:
             max_pages_per_context=settings.getint("PLAYWRIGHT_MAX_PAGES_PER_CONTEXT"),
             max_contexts=settings.getint("PLAYWRIGHT_MAX_CONTEXTS") or None,
             startup_context_kwargs=settings.getdict("PLAYWRIGHT_CONTEXTS"),
-            navigation_timeout=_get_float_setting(
-                settings, "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT"
-            ),
+            navigation_timeout=_get_float_setting(settings, "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT"),
             restart_disconnected_browser=settings.getbool(
                 "PLAYWRIGHT_RESTART_DISCONNECTED_BROWSER", default=True
             ),
@@ -258,9 +256,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
             await self._maybe_launch_browser()
             context = await self.browser.new_context(**context_kwargs)
 
-        context.on(
-            "close", self._make_close_browser_context_callback(name, persistent, remote, spider)
-        )
+        context.on("close", self._make_close_browser_context_callback(name, persistent, remote, spider))
         self.stats.inc_value("playwright/context_count")
         self.stats.inc_value(f"playwright/context_count/persistent/{persistent}")
         self.stats.inc_value(f"playwright/context_count/remote/{remote}")
@@ -344,9 +340,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
     def _set_max_concurrent_context_count(self):
         current_max_count = self.stats.get_value("playwright/context_count/max_concurrent")
         if current_max_count is None or len(self.context_wrappers) > current_max_count:
-            self.stats.set_value(
-                "playwright/context_count/max_concurrent", len(self.context_wrappers)
-            )
+            self.stats.set_value("playwright/context_count/max_concurrent", len(self.context_wrappers))
 
     @inlineCallbacks
     def close(self) -> Deferred:
@@ -399,9 +393,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
             page = await self._create_page(request=request, spider=spider)
         context_name = request.meta.setdefault("playwright_context", DEFAULT_CONTEXT_NAME)
 
-        _attach_page_event_handlers(
-            page=page, request=request, spider=spider, context_name=context_name
-        )
+        _attach_page_event_handlers(page=page, request=request, spider=spider, context_name=context_name)
 
         # We need to identify the Playwright request that matches the Scrapy request
         # in order to override method and body if necessary.
@@ -451,9 +443,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
                 self.stats.inc_value("playwright/page_count/closed")
             raise
 
-    async def _download_request_with_page(
-        self, request: Request, page: Page, spider: Spider
-    ) -> Response:
+    async def _download_request_with_page(self, request: Request, page: Page, spider: Spider) -> Response:
         # set this early to make it available in errbacks even if something fails
         if request.meta.get("playwright_include_page"):
             request.meta["playwright_page"] = page
@@ -466,8 +456,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
             headers.pop("Content-Encoding", None)
         elif not download:
             logger.warning(
-                "Navigating to %s returned None, the response"
-                " will have empty headers and status 200",
+                "Navigating to %s returned None, the response" " will have empty headers and status 200",
                 request,
                 extra={
                     "spider": spider,
@@ -659,9 +648,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
         self.stats.inc_value(f"{stats_prefix}/method/{response.request.method}")
 
     async def _browser_disconnected_callback(self) -> None:
-        close_context_coros = [
-            ctx_wrapper.context.close() for ctx_wrapper in self.context_wrappers.values()
-        ]
+        close_context_coros = [ctx_wrapper.context.close() for ctx_wrapper in self.context_wrappers.values()]
         self.context_wrappers.clear()
         with suppress(TargetClosedError):
             await asyncio.gather(*close_context_coros)
@@ -795,8 +782,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
                 await route.continue_(**overrides)
                 if overrides.get("method"):
                     logger.debug(
-                        "[Context=%s] Overridden method for Playwright request"
-                        " to %s: original=%s new=%s",
+                        "[Context=%s] Overridden method for Playwright request" " to %s: original=%s new=%s",
                         context_name,
                         playwright_request.url,
                         original_playwright_method,
@@ -836,9 +822,7 @@ class ScrapyPlaywrightDownloadHandler(HTTPDownloadHandler):
         return _request_handler
 
 
-def _attach_page_event_handlers(
-    page: Page, request: Request, spider: Spider, context_name: str
-) -> None:
+def _attach_page_event_handlers(page: Page, request: Request, spider: Spider, context_name: str) -> None:
     event_handlers = request.meta.get("playwright_page_event_handlers") or {}
     for event, handler in event_handlers.items():
         if callable(handler):
@@ -848,8 +832,7 @@ def _attach_page_event_handlers(
                 page.on(event, getattr(spider, handler))
             except AttributeError as ex:
                 logger.warning(
-                    "Spider '%s' does not have a '%s' attribute,"
-                    " ignoring handler for event '%s'",
+                    "Spider '%s' does not have a '%s' attribute," " ignoring handler for event '%s'",
                     spider.name,
                     handler,
                     event,

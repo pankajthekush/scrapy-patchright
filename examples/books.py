@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Generator, Optional
 
-from playwright.async_api import Page
+from patchright.async_api import Page
 from scrapy import Spider
 from scrapy.http.response import Response
 
@@ -53,9 +53,7 @@ class BooksSpider(Spider):
     async def parse_book(self, response: Response) -> dict:
         url_sha256 = hashlib.sha256(response.url.encode("utf-8")).hexdigest()
         page: Page = response.meta["playwright_page"]
-        await page.screenshot(
-            path=Path(__file__).parent / "books" / f"{url_sha256}.png", full_page=True
-        )
+        await page.screenshot(path=Path(__file__).parent / "books" / f"{url_sha256}.png", full_page=True)
         await page.close()
         return {
             "url": response.url,

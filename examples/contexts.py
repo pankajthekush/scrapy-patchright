@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from playwright.async_api import Page
+from patchright.async_api import Page
 from scrapy import Spider, Request
 
 
